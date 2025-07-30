@@ -6,6 +6,7 @@ import com.xxx.mianshiya.user.domain.req.UserUpdateReq;
 import com.xxx.mianshiya.user.domain.resp.UserDetailResp;
 import com.xxx.mianshiya.user.domain.resp.UserLoginResp;
 import com.xxx.mianshiya.user.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -45,5 +46,17 @@ public class UserController {
     @DeleteMapping("/{id:\\d+}")
     public void delete(@PathVariable Long id) {
         userService.delete(id);
+    }
+
+    @GetMapping("/test")
+    @PreAuthorize("hasAuthority('admin:all')")
+    public String test() {
+        return "test";
+    }
+
+    @GetMapping("/test1")
+    @PreAuthorize("hasAuthority('admin:read')")
+    public String test1() {
+        return "test1";
     }
 }
