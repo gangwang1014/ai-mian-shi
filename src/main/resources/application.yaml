@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: mianshiya
+    name: aimianshi
   # 默认 dev 环境
   profiles:
     active: dev

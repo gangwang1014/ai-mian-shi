@@ -10,9 +10,9 @@
   </parent>
 
   <groupId>com.xxx</groupId>
-  <artifactId>mianshiya</artifactId>
+  <artifactId>aimianshi</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>mianshiya</name>
+  <name>aimianshi</name>
   <url>http://maven.apache.org</url>
 
   <properties>
