@@ -32,8 +32,7 @@ CREATE TABLE IF NOT EXISTS `role`
 (
     `id`          bigint PRIMARY KEY COMMENT '角色ID',
     `name`        varchar(64)                        NOT NULL COMMENT '角色名称（如 admin、user）',
-    `code`        varchar(64)                        NOT NULL UNIQUE COMMENT '角色标识（唯一，英文）',
-    `description` varchar(256) COMMENT '角色描述',
+#     `code`        varchar(64)                        NOT NULL UNIQUE COMMENT '角色标识（唯一，英文）',
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_delete`   tinyint  DEFAULT 0                 NOT NULL COMMENT '是否删除'
@@ -48,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `user_role`
     `role_id`     bigint                             NOT NULL COMMENT '角色ID（对应 role.id）',
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `is_delete`   tinyint  DEFAULT 0                 NOT NULL COMMENT '是否删除',
     UNIQUE KEY `uk_user_role` (`user_id`, `role_id`),
     INDEX idx_user_id (`user_id`),
     INDEX idx_role_id (`role_id`)
@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS `user_role`
 CREATE TABLE IF NOT EXISTS `permission`
 (
     `id`          bigint PRIMARY KEY AUTO_INCREMENT COMMENT '权限ID',
-    `name`        varchar(128)                       NOT NULL COMMENT '权限名称（如：用户管理）',
     `code`        varchar(128)                       NOT NULL UNIQUE COMMENT '权限标识（如：user:read）',
     `url`         varchar(256) COMMENT '接口路径（可选）',
     `method`      varchar(10) COMMENT '请求方法（GET/POST/PUT/DELETE）',
@@ -75,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `role_permission`
     `permission_id` bigint                             NOT NULL COMMENT '权限ID（对应 permission.id）',
     `create_time`   datetime DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
     `update_time`   datetime DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `is_delete`     tinyint  DEFAULT 0                 NOT NULL COMMENT '是否删除',
     UNIQUE KEY `uk_role_permission` (`role_id`, `permission_id`),
     INDEX idx_role_id (`role_id`),
     INDEX idx_permission_id (`permission_id`)
@@ -117,7 +117,7 @@ create table if not exists question_bank_question
     id               bigint auto_increment comment 'id' primary key,
     question_bank_id bigint                             not null comment '题库 id',
     question_id      bigint                             not null comment '题目 id',
-    user_id          bigint                             not null comment '创建用户 id',
+#     user_id          bigint                             not null comment '创建用户 id',
     create_time      datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time      datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     unique (question_bank_id, question_id)
