@@ -1,0 +1,39 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: mianshiya
+  # 默认 dev 环境
+  profiles:
+    active: dev
+
+  datasource:
+    driver-class-name: ${mianshiya.datasource.driver-class-name}
+    url: jdbc:mysql://${mianshiya.datasource.host}:${mianshiya.datasource.port}/${mianshiya.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${mianshiya.datasource.username}
+    password: ${mianshiya.datasource.password}
+
+  # 文件上传
+  servlet:
+    multipart:
+      # 大小限制
+      max-file-size: 10MB
+
+# mybatis-plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 控制台输出日志
+    map-underscore-to-camel-case: true # 下划线转驼峰
+  mapper-locations: classpath:mapper/**/*.xml # mapper.xml
+  type-aliases-package: com.xxx.mianshiya.**.domain.entity # 别名扫描包
+  global-config:
+    db-config:
+      update-strategy: not_null # 只有当字段值不为null时才更新该字段
+      id-type: assign_id
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+jwt:
+  secret-key: ${mianshiya.jwt.secret-key}
+  ttl: ${mianshiya.jwt.ttl}
+  token-name: ${mianshiya.jwt.token-name}
