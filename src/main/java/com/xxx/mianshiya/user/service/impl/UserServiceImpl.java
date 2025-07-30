@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
             try {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 userRepository.save(user);
-                userRoleService.save(user.getId(), RoleEnum.USER);
+                userRoleService.addUserRole(user.getId(), RoleEnum.USER);
             } catch (DuplicateKeyException e) {
                 throw new BizException("user already register");
             }

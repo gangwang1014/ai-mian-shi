@@ -1,9 +1,8 @@
 package com.xxx.mianshiya.userrole.controller;
 
+import com.xxx.mianshiya.userrole.domain.entity.UserRole;
 import com.xxx.mianshiya.userrole.service.UserRoleService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user-role")
@@ -19,9 +18,17 @@ public class UserRoleController {
      * todo 待完善
      * 管理员更改用户角色
      */
-    @PostMapping
+    @PutMapping
     public void updateUserRole() {
 
+    }
+
+    /**
+     * 管理员添加用户角色
+     */
+    @PostMapping
+    public void addUserRole(@RequestBody UserRole userRole) {
+        userRoleService.add(userRole);
     }
 
 }

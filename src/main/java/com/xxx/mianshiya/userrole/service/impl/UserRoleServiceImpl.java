@@ -21,7 +21,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public boolean save(Long userId, RoleEnum roleEnum) {
+    public boolean addUserRole(Long userId, RoleEnum roleEnum) {
         Role role = roleRepository.findByRoleName(roleEnum.getName())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         return userRoleRepository.save(new UserRole(null, userId, role.getId()));
@@ -34,6 +34,11 @@ public class UserRoleServiceImpl implements UserRoleService {
     public boolean deleteUserRoles(Long userId) {
         List<UserRole> userRoles = userRoleRepository.getByUserId(userId);
         return userRoleRepository.removeByIds(userRoles);
+    }
+
+    @Override
+    public void add(UserRole userRole) {
+        userRoleRepository.save(userRole);
     }
 
 }
