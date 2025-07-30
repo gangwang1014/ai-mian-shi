@@ -6,5 +6,5 @@ public interface UserRoleService {
 
     boolean save(Long userId, RoleEnum roleEnum);
 
-    boolean delete(Long userId);
+    boolean deleteUserRoles(Long userId);
 }

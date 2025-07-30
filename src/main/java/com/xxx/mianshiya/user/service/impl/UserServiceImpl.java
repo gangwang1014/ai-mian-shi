@@ -3,6 +3,7 @@ package com.xxx.mianshiya.user.service.impl;
 import com.xxx.mianshiya.common.client.JwtClient;
 import com.xxx.mianshiya.common.exception.BizException;
 import com.xxx.mianshiya.common.utils.ThrowUtils;
+import com.xxx.mianshiya.role.enums.RoleEnum;
 import com.xxx.mianshiya.user.constant.UserConstant;
 import com.xxx.mianshiya.user.convert.UserConverter;
 import com.xxx.mianshiya.user.domain.entity.User;
@@ -13,6 +14,7 @@ import com.xxx.mianshiya.user.domain.resp.UserDetailResp;
 import com.xxx.mianshiya.user.domain.resp.UserLoginResp;
 import com.xxx.mianshiya.user.repository.UserRepository;
 import com.xxx.mianshiya.user.service.UserService;
+import com.xxx.mianshiya.userrole.service.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,8 @@ public class UserServiceImpl implements UserService {
 
     private final JwtClient jwtClient;
 
+    private final UserRoleService userRoleService;
+
     @Override
     @Transactional
     public void register(UserRegisterReq userRegisterReq) {
@@ -39,7 +43,7 @@ public class UserServiceImpl implements UserService {
             try {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 userRepository.save(user);
-                // todo 设置用户角色为 user
+                userRoleService.save(user.getId(), RoleEnum.USER);
             } catch (DuplicateKeyException e) {
                 throw new BizException("user already register");
             }
@@ -72,8 +76,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void delete(Long id) {
         boolean remove = userRepository.removeById(id);
-        ThrowUtils.throwIf(!remove, "User deletion failed, maybe the user does not exist");
-        // todo 清理 用户角色权限
+        ThrowUtils.throwIf(!remove, "User delete failed, maybe the user does not exist");
+        boolean delete = userRoleService.deleteUserRoles(id);
+        ThrowUtils.throwIf(!delete, "User roles delete failed, maybe the user roles does not exist");
     }
 
     private String createToken(Long userId) {
