@@ -6,9 +6,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class UserLoginReq {
     @NotBlank(message = "Account must not be blank")
     @Size(min = 5, message = "Account must be at least 5 characters long")

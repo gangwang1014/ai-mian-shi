@@ -3,9 +3,11 @@ package com.xxx.mianshiya.user.domain.req;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class UserUpdateReq {
     @NotBlank
     private String id;

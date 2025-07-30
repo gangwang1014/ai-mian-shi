@@ -7,10 +7,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @PasswordConfirmed(passwordField = "password", confirmField = "confirmPassword")
 @Getter
 @Setter
+@ToString
 public class UserRegisterReq {
     @NotBlank(message = "Account must not be blank")
     @Size(min = 5, message = "Account must be at least 5 characters long")
