@@ -31,9 +31,7 @@ public class QuestionBankController {
     }
 
     @PostMapping("/page")
-    public IPage<QuestionBankResp> pageQuestionBank(
-            @RequestBody PageQuestionBankReq pageQuestionBankReq
-    ) {
+    public IPage<QuestionBankResp> pageQuestionBank(@RequestBody PageQuestionBankReq pageQuestionBankReq) {
         return questionBankService.pageQuestionBank(pageQuestionBankReq);
     }
 
