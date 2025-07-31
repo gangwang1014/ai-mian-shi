@@ -3,6 +3,7 @@ package com.xxx.aimianshi.question.convert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xxx.aimianshi.common.utils.UserContext;
 import com.xxx.aimianshi.question.domain.entity.Question;
 import com.xxx.aimianshi.question.domain.req.AddQuestionReq;
 import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
@@ -13,7 +14,7 @@ import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = { UserContext.class })
 public interface QuestionConverter {
 
     @Mappings({
@@ -21,14 +22,13 @@ public interface QuestionConverter {
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "isDelete", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            // todo 补全 userId
-            @Mapping(target = "userId", ignore = true),
+            @Mapping(target = "userId", expression = "java(UserContext.getCurrentUserId())"),
             @Mapping(target = "tags", expression = "java(toJson(addQuestionReq.getTags()))")
     })
     Question toEntity(AddQuestionReq addQuestionReq);
 
     default String toJson(List<String> tags) {
-        try{
+        try {
             return new ObjectMapper().writeValueAsString(tags);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -37,8 +37,6 @@ public interface QuestionConverter {
 
 
     @Mappings({
-            // todo 补全 user nickname
-            @Mapping(target = "userNickname", ignore = true),
             @Mapping(target = "tags", expression = "java(toList(question.getTags()))")
     })
     QuestionResp toQuestionResp(Question question);
@@ -57,7 +55,7 @@ public interface QuestionConverter {
             @Mapping(target = "createTime", ignore = true),
             @Mapping(target = "isDelete", ignore = true),
             @Mapping(target = "updateTime", ignore = true),
-            @Mapping(target = "userId", ignore = true),
+            @Mapping(target = "userId", expression = "java(UserContext.getCurrentUserId())"),
             @Mapping(target = "tags", expression = "java(toJson(updateQuestionReq.getTags()))")
     })
     Question toEntity(UpdateQuestionReq updateQuestionReq);

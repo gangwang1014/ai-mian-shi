@@ -19,6 +19,4 @@ public class QuestionResp {
     private String answer;
     // 创建人
     private Long userId;
-
-    private String userNickname;
 }

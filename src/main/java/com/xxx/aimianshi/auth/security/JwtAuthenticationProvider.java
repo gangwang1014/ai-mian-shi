@@ -2,6 +2,7 @@ package com.xxx.aimianshi.auth.security;
 
 import com.xxx.aimianshi.common.client.JwtClient;
 import com.xxx.aimianshi.common.exception.TokenAuthenticationException;
+import com.xxx.aimianshi.common.utils.UserContext;
 import com.xxx.aimianshi.permission.mapper.PermissionMapper;
 import com.xxx.aimianshi.userrole.mapper.UserRoleMapper;
 import io.jsonwebtoken.Claims;
@@ -39,6 +40,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                     .map(claim -> {
 //                        String userId = claim.getSubject();
                         Long userId = claim.get("userId", Long.class);
+                        UserContext.setCurrentUserId(userId);
                         log.info("userId: {}", userId);
                         // 加载用户权限
                         List<String> Permissions = loadUserPermissions(userId);
