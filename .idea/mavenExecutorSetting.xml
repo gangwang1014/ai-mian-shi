@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="mavenExecutorSetting">
+    <option name="favoritePanelFullMode" value="false" />
+    <option name="defaultSettings">
+      <ExecutionSettings>
+        <option name="profiles">
+          <list>
+            <option value="JDK-17" />
+          </list>
+        </option>
+        <option name="projectsToBuild">
+          <list>
+            <ProjectToBuild>
+              <option name="displayName" value="aimianshi" />
+              <option name="mavenArtifact">
+                <MavenArtifact>
+                  <option name="groupId" value="com.xxx" />
+                  <option name="artifactId" value="aimianshi" />
+                  <option name="version" value="1.0-SNAPSHOT" />
+                </MavenArtifact>
+              </option>
+              <option name="projectDictionary" value="$PROJECT_DIR$" />
+            </ProjectToBuild>
+          </list>
+        </option>
+        <option name="selectedProject">
+          <MavenArtifact>
+            <option name="groupId" value="com.xxx" />
+            <option name="artifactId" value="aimianshi" />
+            <option name="version" value="1.0-SNAPSHOT" />
+          </MavenArtifact>
+        </option>
+        <option name="collapseModules">
+          <set>
+            <MavenGroupAndArtifactKey>
+              <option name="groupId" value="com.xxx" />
+              <option name="artifactId" value="aimianshi" />
+            </MavenGroupAndArtifactKey>
+          </set>
+        </option>
+      </ExecutionSettings>
+    </option>
+    <option name="isFavoritePanelFullMode" value="false" />
+    <option name="visibleSettings">
+      <set>
+        <option value="PROFILES" />
+        <option value="OPTIONAL_JVM_OPTIONS" />
+        <option value="THREAD_COUNT" />
+        <option value="OFFLINE_MODE" />
+        <option value="ALWAYS_UPDATE_SNAPSHOT" />
+        <option value="SKIP_TESTS" />
+        <option value="FAVORITE" />
+      </set>
+    </option>
+    <option name="visibleSettingsNotInitYet" value="false" />
+  </component>
+</project>

@@ -6,8 +6,16 @@ import com.xxx.aimianshi.questionbank.mapper.QuestionBankQuestionMapper;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class QuestionBankQuestionRepositoryImpl extends ServiceImpl<QuestionBankQuestionMapper, QuestionBankQuestion>
         implements QuestionBankQuestionRepository {
 
+    @Override
+    public List<QuestionBankQuestion> getByQuestionBankId(Long questionBankId) {
+        return lambdaQuery()
+                .eq(QuestionBankQuestion::getQuestionBankId, questionBankId)
+                .list();
+    }
 }

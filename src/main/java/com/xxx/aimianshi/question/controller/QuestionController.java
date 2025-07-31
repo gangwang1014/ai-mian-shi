@@ -2,7 +2,7 @@ package com.xxx.aimianshi.question.controller;
 
 import com.xxx.aimianshi.question.domain.req.AddQuestionReq;
 import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
-import com.xxx.aimianshi.question.domain.resp.QuestionDetailResp;
+import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import com.xxx.aimianshi.question.service.QuestionService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +25,7 @@ public class QuestionController {
         questionService.add(addQuestionReq);
     }
     @GetMapping
-    public QuestionDetailResp questionDetail(@RequestParam @NotNull Long id) {
+    public QuestionResp questionDetail(@RequestParam @NotNull Long id) {
         return questionService.detail(id);
     }
 
@@ -40,8 +40,4 @@ public class QuestionController {
     public void deleteQuestion(@PathVariable @NotNull Long id) {
         questionService.delete(id);
     }
-
-    // todo page 分页获取题目列表
-
-    // todo 用户添加题目, 管理员审核功能
 }

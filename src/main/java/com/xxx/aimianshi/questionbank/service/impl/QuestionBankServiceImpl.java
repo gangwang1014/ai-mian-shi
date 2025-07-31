@@ -4,13 +4,12 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xxx.aimianshi.common.domain.PageRequest;
 import com.xxx.aimianshi.common.exception.BizException;
 import com.xxx.aimianshi.common.utils.ThrowUtils;
 import com.xxx.aimianshi.questionbank.convert.QuestionBankConverter;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBank;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
-import com.xxx.aimianshi.questionbank.domain.req.PageQueryQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankRepository;
@@ -47,10 +46,10 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     }
 
     @Override
-    public IPage<QuestionBankResp> pageQuestionBank(PageQueryQuestionBankReq pageQueryQuestionBankReq, PageRequest pageRequest) {
-        int pageSize = pageRequest.getPageSize();
-        int current = pageRequest.getCurrent();
-        LambdaQueryWrapper<QuestionBank> wrapper = buildQueryWrapper(pageQueryQuestionBankReq);
+    public IPage<QuestionBankResp> pageQuestionBank(PageQuestionBankReq pageQuestionBankReq) {
+        int pageSize = pageQuestionBankReq.getPageSize();
+        int current = pageQuestionBankReq.getCurrent();
+        LambdaQueryWrapper<QuestionBank> wrapper = buildQueryWrapper(pageQuestionBankReq);
         Page<QuestionBank> page = questionBankRepository.page(new Page<>(current, pageSize), wrapper);
         return page.convert(questionBankConverter::toQuestionBankResp);
     }
@@ -69,10 +68,10 @@ public class QuestionBankServiceImpl implements QuestionBankService {
         ThrowUtils.throwIf(!update, "update failed, the question bank may not exist");
     }
 
-    private LambdaQueryWrapper<QuestionBank> buildQueryWrapper(PageQueryQuestionBankReq req) {
+    private LambdaQueryWrapper<QuestionBank> buildQueryWrapper(PageQuestionBankReq req) {
         return new LambdaQueryWrapper<QuestionBank>()
                 .eq(Objects.nonNull(req.getUserId()), QuestionBank::getUserId, req.getUserId())
-                .like(StrUtil.isNotBlank(req.getTitle()), QuestionBank::getTitle, req.getTitle())
-                .like(StrUtil.isNotBlank(req.getDescription()), QuestionBank::getDescription, req.getDescription());
+                .like(StrUtil.isNotBlank(req.getSearchText()), QuestionBank::getTitle, req.getSearchText())
+                .like(StrUtil.isNotBlank(req.getSearchText()), QuestionBank::getDescription, req.getSearchText());
     }
 }

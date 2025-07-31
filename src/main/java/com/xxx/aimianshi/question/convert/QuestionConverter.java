@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxx.aimianshi.question.domain.entity.Question;
 import com.xxx.aimianshi.question.domain.req.AddQuestionReq;
 import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
-import com.xxx.aimianshi.question.domain.resp.QuestionDetailResp;
+import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -41,7 +41,7 @@ public interface QuestionConverter {
             @Mapping(target = "userNickname", ignore = true),
             @Mapping(target = "tags", expression = "java(toList(question.getTags()))")
     })
-    QuestionDetailResp toQuestionDetailResp(Question question);
+    QuestionResp toQuestionResp(Question question);
 
 
     default List<String> toList(String tagsJson) {

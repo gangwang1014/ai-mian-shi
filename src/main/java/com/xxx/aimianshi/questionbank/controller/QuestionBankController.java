@@ -1,9 +1,8 @@
 package com.xxx.aimianshi.questionbank.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.xxx.aimianshi.common.domain.PageRequest;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
-import com.xxx.aimianshi.questionbank.domain.req.PageQueryQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
 import com.xxx.aimianshi.questionbank.service.QuestionBankService;
@@ -31,12 +30,11 @@ public class QuestionBankController {
         return questionBankService.detailQuestionBank(id);
     }
 
-    @GetMapping("/page")
+    @PostMapping("/page")
     public IPage<QuestionBankResp> pageQuestionBank(
-            @RequestBody PageQueryQuestionBankReq pageQueryQuestionBankReq,
-            @RequestBody PageRequest pageRequest
+            @RequestBody PageQuestionBankReq pageQuestionBankReq
     ) {
-        return questionBankService.pageQuestionBank(pageQueryQuestionBankReq, pageRequest);
+        return questionBankService.pageQuestionBank(pageQuestionBankReq);
     }
 
     @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")

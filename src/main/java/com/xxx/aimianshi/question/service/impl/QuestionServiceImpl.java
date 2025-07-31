@@ -6,7 +6,7 @@ import com.xxx.aimianshi.question.convert.QuestionConverter;
 import com.xxx.aimianshi.question.domain.entity.Question;
 import com.xxx.aimianshi.question.domain.req.AddQuestionReq;
 import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
-import com.xxx.aimianshi.question.domain.resp.QuestionDetailResp;
+import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import com.xxx.aimianshi.question.repository.QuestionRepository;
 import com.xxx.aimianshi.question.service.QuestionService;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +32,10 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public QuestionDetailResp detail(Long id) {
+    public QuestionResp detail(Long id) {
         Question question = questionRepository.getOptById(id)
                 .orElseThrow(() -> new BizException("The question does not exist"));
-        return questionConverter.toQuestionDetailResp(question);
+        return questionConverter.toQuestionResp(question);
     }
 
     @Override
