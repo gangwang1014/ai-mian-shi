@@ -1,5 +1,6 @@
 package com.xxx.aimianshi.user.service;
 
+import com.xxx.aimianshi.user.domain.req.ChangePasswordReq;
 import com.xxx.aimianshi.user.domain.req.UserLoginReq;
 import com.xxx.aimianshi.user.domain.req.UserRegisterReq;
 import com.xxx.aimianshi.user.domain.req.UserUpdateReq;
@@ -17,4 +18,6 @@ public interface UserService {
     void update(UserUpdateReq userUpdateReq);
 
     void delete(Long id);
+
+    void changePassword(ChangePasswordReq changePasswordReq);
 }

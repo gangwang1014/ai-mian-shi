@@ -3,6 +3,7 @@ package com.xxx.aimianshi.user.convert;
 import cn.hutool.core.util.RandomUtil;
 import com.xxx.aimianshi.user.constant.UserConstant;
 import com.xxx.aimianshi.user.domain.entity.User;
+import com.xxx.aimianshi.user.domain.req.ChangePasswordReq;
 import com.xxx.aimianshi.user.domain.req.UserRegisterReq;
 import com.xxx.aimianshi.user.domain.req.UserUpdateReq;
 import com.xxx.aimianshi.user.domain.resp.UserDetailResp;
@@ -55,4 +56,23 @@ public interface UserConverter {
             @Mapping(target = "password", ignore = true)
     })
     User toEntity(UserUpdateReq userUpdateReq);
+
+    @Mappings({
+            @Mapping(target = "updateTime", ignore = true),
+            @Mapping(target = "isDelete", ignore = true),
+            @Mapping(target = "createTime", ignore = true),
+            @Mapping(target = "unionId", ignore = true),
+            @Mapping(target = "phone", ignore = true),
+            @Mapping(target = "mpOpenId", ignore = true),
+            @Mapping(target = "email", ignore = true),
+            @Mapping(target = "avatar", ignore = true),
+            @Mapping(target = "account", ignore = true),
+            @Mapping(target = "expertiseDirection", ignore = true),
+            @Mapping(target = "grade", ignore = true),
+            @Mapping(target = "nickname", ignore = true),
+            @Mapping(target = "profile", ignore = true),
+            @Mapping(target = "workExperience", ignore = true),
+            @Mapping(target = "password", source = "newPassword")
+    })
+    User toEntity(ChangePasswordReq changePasswordReq);
 }

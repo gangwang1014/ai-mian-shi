@@ -1,12 +1,12 @@
 package com.xxx.aimianshi.user.controller;
 
+import com.xxx.aimianshi.user.domain.req.ChangePasswordReq;
 import com.xxx.aimianshi.user.domain.req.UserLoginReq;
 import com.xxx.aimianshi.user.domain.req.UserRegisterReq;
 import com.xxx.aimianshi.user.domain.req.UserUpdateReq;
 import com.xxx.aimianshi.user.domain.resp.UserDetailResp;
 import com.xxx.aimianshi.user.domain.resp.UserLoginResp;
 import com.xxx.aimianshi.user.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,8 +37,7 @@ public class UserController {
     public UserDetailResp detail(@PathVariable Long id) {
         return userService.detail(id);
     }
-
-    @PostMapping("/update")
+    @PutMapping("/update")
     public void update(@RequestBody UserUpdateReq userUpdateReq) {
         userService.update(userUpdateReq);
     }
@@ -48,15 +47,8 @@ public class UserController {
         userService.delete(id);
     }
 
-    @GetMapping("/test")
-    @PreAuthorize("hasAuthority('admin:all')")
-    public String test() {
-        return "test";
-    }
-
-    @GetMapping("/test1")
-    @PreAuthorize("hasAuthority('admin:read')")
-    public String test1() {
-        return "test1";
+    @PutMapping("/change-password")
+    public void changePassword(@RequestBody ChangePasswordReq changePasswordReq) {
+        userService.changePassword(changePasswordReq);
     }
 }

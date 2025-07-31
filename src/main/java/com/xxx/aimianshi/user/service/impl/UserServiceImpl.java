@@ -7,6 +7,7 @@ import com.xxx.aimianshi.role.enums.RoleEnum;
 import com.xxx.aimianshi.user.constant.UserConstant;
 import com.xxx.aimianshi.user.convert.UserConverter;
 import com.xxx.aimianshi.user.domain.entity.User;
+import com.xxx.aimianshi.user.domain.req.ChangePasswordReq;
 import com.xxx.aimianshi.user.domain.req.UserLoginReq;
 import com.xxx.aimianshi.user.domain.req.UserRegisterReq;
 import com.xxx.aimianshi.user.domain.req.UserUpdateReq;
@@ -79,6 +80,16 @@ public class UserServiceImpl implements UserService {
         ThrowUtils.throwIf(!remove, "User delete failed, maybe the user does not exist");
         boolean delete = userRoleService.deleteUserRoles(id);
         ThrowUtils.throwIf(!delete, "User roles delete failed, maybe the user roles does not exist");
+    }
+
+    @Override
+    public void changePassword(ChangePasswordReq changePasswordReq) {
+        User user = userConverter.toEntity(changePasswordReq);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        boolean update = userRepository.updateById(user);
+        ThrowUtils.throwIf(!update, "password update failed");
+
+        // todo 踢人下线
     }
 
     private String createToken(Long userId) {
