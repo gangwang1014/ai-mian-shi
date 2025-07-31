@@ -24,7 +24,7 @@ public class QuestionBankQuestionController {
      */
     @PreAuthorize("hasRole('admin') or hasAnyAuthority('insert', 'all')")
     @PostMapping
-    public void addQuestionToBank(AddQuestionToBankReq addQuestionToBankReq) {
+    public void addQuestionToBank(@RequestBody AddQuestionToBankReq addQuestionToBankReq) {
         questionBankQuestionService.addQuestionToBank(addQuestionToBankReq);
     }
 
