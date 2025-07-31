@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxx.aimianshi.userrole.mapper.UserRoleMapper">
+    <select id="getUserRoles" resultType="java.lang.String">
+        select r.name
+        from role as r
+        join user_role as ur on r.id = ur.role_id
+        where ur.user_id = #{userId}
+        and ur.is_delete = 0
+    </select>
+</mapper>

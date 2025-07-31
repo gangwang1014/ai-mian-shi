@@ -3,6 +3,7 @@ package com.xxx.aimianshi.questionbank.controller;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionToBankReq;
 import com.xxx.aimianshi.questionbank.service.QuestionBankQuestionService;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,11 +19,13 @@ public class QuestionBankQuestionController {
     /**
      * 向题库增加题目
      */
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('insert', 'all')")
     @PostMapping
     public void addQuestionToBank(AddQuestionToBankReq addQuestionToBankReq) {
         questionBankQuestionService.addQuestionToBank(addQuestionToBankReq);
     }
 
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
     @DeleteMapping("/{id}")
     public void deleteQuestionBank(@PathVariable @NotNull Long id) {
         questionBankQuestionService.deleteQuestionBank(id);

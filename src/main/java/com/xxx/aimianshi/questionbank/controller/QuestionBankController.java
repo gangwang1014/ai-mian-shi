@@ -8,6 +8,7 @@ import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
 import com.xxx.aimianshi.questionbank.service.QuestionBankService;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,7 +20,7 @@ public class QuestionBankController {
         this.questionBankService = questionBankService;
     }
 
-    // todo add update delete 为管理员权限
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('insert', 'all')")
     @PostMapping
     public void addQuestionBank(@RequestBody AddQuestionBankReq addQuestionBankReq) {
         questionBankService.addQuestionBank(addQuestionBankReq);
@@ -38,11 +39,13 @@ public class QuestionBankController {
         return questionBankService.pageQuestionBank(pageQueryQuestionBankReq, pageRequest);
     }
 
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
     @DeleteMapping("/{id}")
     public void deleteQuestionBank(@PathVariable @NotNull Long id) {
         questionBankService.deleteQuestionBank(id);
     }
 
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('update', 'all')")
     @PutMapping
     public void updateQuestionBank(@RequestBody UpdateQuestionBankReq updateQuestionBankReq) {
         questionBankService.updateQuestionBank(updateQuestionBankReq);

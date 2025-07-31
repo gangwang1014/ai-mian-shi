@@ -5,6 +5,7 @@ import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
 import com.xxx.aimianshi.question.domain.resp.QuestionDetailResp;
 import com.xxx.aimianshi.question.service.QuestionService;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,23 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    // todo add, update, delete 为管理员权限
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('insert', 'all')")
     @PostMapping
     public void addQuestion(@RequestBody AddQuestionReq addQuestionReq) {
         questionService.add(addQuestionReq);
     }
-
     @GetMapping
     public QuestionDetailResp questionDetail(@RequestParam @NotNull Long id) {
         return questionService.detail(id);
     }
 
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('update', 'all')")
     @PutMapping
     public void updateQuestion(@RequestBody UpdateQuestionReq updateQuestionReq) {
         questionService.update(updateQuestionReq);
     }
 
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
     @DeleteMapping("/{id}")
     public void deleteQuestion(@PathVariable @NotNull Long id) {
         questionService.delete(id);
