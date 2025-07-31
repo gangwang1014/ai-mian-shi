@@ -16,6 +16,7 @@ public class SecurityWhiteList {
     public static final String [] WHITE_LIST = {
             "/user/login",
             "/user/register",
+            "/druid/**",
     };
 
     public boolean isWhiteList(String path) {
