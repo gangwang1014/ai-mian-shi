@@ -9,8 +9,10 @@ import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
 import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import com.xxx.aimianshi.question.repository.QuestionRepository;
 import com.xxx.aimianshi.question.service.QuestionService;
+import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
 
     private final QuestionConverter questionConverter;
+
+    private final QuestionBankQuestionRepository questionBankQuestionRepository;
 
     @Override
     public void add(AddQuestionReq addQuestionReq) {
@@ -54,5 +58,16 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(questionConverter::toEntity)
                 .toList();
         questionRepository.saveBatch(questions);
+    }
+
+    @Override
+    @Transactional
+    public void batchDeleteQuestion(List<Long> questionIds) {
+        if (questionIds.isEmpty()) {
+            return;
+        }
+        boolean removed = questionRepository.removeBatchByIds(questionIds);
+        ThrowUtils.throwIf(!removed, "batch delete failed");
+        questionBankQuestionRepository.removeBatchByQuestionIds(questionIds);
     }
 }

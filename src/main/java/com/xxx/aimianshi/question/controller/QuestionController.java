@@ -48,4 +48,11 @@ public class QuestionController {
     public void batchAddQuestion(@RequestBody List<AddQuestionReq> addQuestionReqList) {
         questionService.batchAddQuestion(addQuestionReqList);
     }
+
+
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
+    @DeleteMapping("/batch")
+    public void batchDeleteQuestion(@RequestBody List<Long> questionIds) {
+        questionService.batchDeleteQuestion(questionIds);
+    }
 }

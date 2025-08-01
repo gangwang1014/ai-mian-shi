@@ -1,5 +1,6 @@
 package com.xxx.aimianshi.questionbank.repository.impl.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBankQuestion;
 import com.xxx.aimianshi.questionbank.mapper.QuestionBankQuestionMapper;
@@ -17,5 +18,19 @@ public class QuestionBankQuestionRepositoryImpl extends ServiceImpl<QuestionBank
         return lambdaQuery()
                 .eq(QuestionBankQuestion::getQuestionBankId, questionBankId)
                 .list();
+    }
+
+    @Override
+    public void removeByQuestionId(Long questionId) {
+        lambdaUpdate()
+                .eq(QuestionBankQuestion::getQuestionId, questionId)
+                .remove();
+    }
+
+    @Override
+    public void removeBatchByQuestionIds(List<Long> questionIds) {
+        lambdaUpdate()
+                .in(CollUtil.isNotEmpty(questionIds), QuestionBankQuestion::getQuestionId, questionIds)
+                .remove();
     }
 }

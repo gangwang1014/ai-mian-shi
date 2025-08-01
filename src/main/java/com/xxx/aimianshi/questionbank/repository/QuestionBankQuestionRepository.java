@@ -8,4 +8,8 @@ import java.util.List;
 public interface QuestionBankQuestionRepository extends IService<QuestionBankQuestion> {
 
     List<QuestionBankQuestion> getByQuestionBankId(Long questionBankId);
+
+    void removeByQuestionId(Long questionId);
+
+    void removeBatchByQuestionIds(List<Long> questionIds);
 }

@@ -18,4 +18,6 @@ public interface QuestionService {
     void delete(@NotNull Long id);
 
     void batchAddQuestion(List<AddQuestionReq> addQuestionReqList);
+
+    void batchDeleteQuestion(List<Long> questionIds);
 }
