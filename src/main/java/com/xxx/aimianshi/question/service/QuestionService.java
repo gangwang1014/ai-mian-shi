@@ -5,6 +5,8 @@ import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
 import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 public interface QuestionService {
 
     void add(AddQuestionReq addQuestionReq);
@@ -14,4 +16,6 @@ public interface QuestionService {
     void update(UpdateQuestionReq updateQuestionReq);
 
     void delete(@NotNull Long id);
+
+    void batchAddQuestion(List<AddQuestionReq> addQuestionReqList);
 }

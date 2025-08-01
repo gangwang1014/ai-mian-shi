@@ -10,8 +10,9 @@ import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import com.xxx.aimianshi.question.repository.QuestionRepository;
 import com.xxx.aimianshi.question.service.QuestionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +25,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void add(AddQuestionReq addQuestionReq) {
         Question question = questionConverter.toEntity(addQuestionReq);
-        try {
-            questionRepository.save(question);
-        } catch (DuplicateKeyException e) {
-            throw new BizException("question is already exist");
-        }
+        questionRepository.save(question);
     }
 
     @Override
@@ -40,7 +37,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public void update(UpdateQuestionReq updateQuestionReq) {
-        // todo 判断 是否为本人, 只有本人 和 管理员能修改题目信息
         Question question = questionConverter.toEntity(updateQuestionReq);
         boolean update = questionRepository.updateById(question);
         ThrowUtils.throwIf(!update, "update failed, maybe the question does not exist");
@@ -50,5 +46,13 @@ public class QuestionServiceImpl implements QuestionService {
     public void delete(Long id) {
         boolean remove = questionRepository.removeById(id);
         ThrowUtils.throwIf(!remove, "delete failed, maybe the question does not exist");
+    }
+
+    @Override
+    public void batchAddQuestion(List<AddQuestionReq> addQuestionReqList) {
+        List<Question> questions = addQuestionReqList.stream()
+                .map(questionConverter::toEntity)
+                .toList();
+        questionRepository.saveBatch(questions);
     }
 }

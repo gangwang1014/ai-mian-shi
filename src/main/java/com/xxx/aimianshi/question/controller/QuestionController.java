@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/question")
 @Validated
@@ -39,5 +41,11 @@ public class QuestionController {
     @DeleteMapping("/{id}")
     public void deleteQuestion(@PathVariable @NotNull Long id) {
         questionService.delete(id);
+    }
+
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('add', 'all')")
+    @PostMapping("/batch")
+    public void batchAddQuestion(@RequestBody List<AddQuestionReq> addQuestionReqList) {
+        questionService.batchAddQuestion(addQuestionReqList);
     }
 }
