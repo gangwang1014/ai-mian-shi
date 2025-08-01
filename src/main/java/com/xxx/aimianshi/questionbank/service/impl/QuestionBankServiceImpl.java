@@ -1,5 +1,6 @@
 package com.xxx.aimianshi.questionbank.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,16 +9,20 @@ import com.xxx.aimianshi.common.exception.BizException;
 import com.xxx.aimianshi.common.utils.ThrowUtils;
 import com.xxx.aimianshi.questionbank.convert.QuestionBankConverter;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBank;
+import com.xxx.aimianshi.questionbank.domain.entity.QuestionBankQuestion;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
+import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankRepository;
 import com.xxx.aimianshi.questionbank.service.QuestionBankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,6 +32,8 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     private final QuestionBankRepository questionBankRepository;
 
     private final QuestionBankConverter questionBankConverter;
+
+    private final QuestionBankQuestionRepository questionBankQuestionRepository;
 
     @Override
     public void addQuestionBank(AddQuestionBankReq addQuestionBankReq) {
@@ -39,10 +46,15 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     }
 
     @Override
+    @Transactional
     public void deleteQuestionBank(Long id) {
         boolean remove = questionBankRepository.removeById(id);
         ThrowUtils.throwIf(!remove, "delete failed, the question bank may not exist");
-        // todo 删除题库关联题目
+        List<QuestionBankQuestion> bankQuestions = questionBankQuestionRepository.getByQuestionBankId(id);
+        if (CollUtil.isEmpty(bankQuestions)) {
+            return;
+        }
+        questionBankQuestionRepository.removeBatchByIds(bankQuestions);
     }
 
     @Override
