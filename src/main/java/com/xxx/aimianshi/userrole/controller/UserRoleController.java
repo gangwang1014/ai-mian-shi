@@ -1,7 +1,9 @@
 package com.xxx.aimianshi.userrole.controller;
 
-import com.xxx.aimianshi.userrole.domain.entity.UserRole;
+import com.xxx.aimianshi.role.enums.RoleEnum;
 import com.xxx.aimianshi.userrole.service.UserRoleService;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,20 +17,33 @@ public class UserRoleController {
     }
 
     /**
-     * todo 待完善
-     * 管理员更改用户角色
-     */
-    @PutMapping
-    public void updateUserRole() {
-
-    }
-
-    /**
      * 管理员添加用户角色
      */
     @PostMapping
-    public void addUserRole(@RequestBody UserRole userRole) {
-        userRoleService.add(userRole);
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('add', 'all')")
+    public void addUserRole(@RequestParam @NotNull Long userId, @RequestParam @NotNull RoleEnum roleEnum) {
+        userRoleService.addUserRole(userId, roleEnum);
+    }
+
+    /**
+     * 删除用户所有角色
+     * @param userId userId
+     */
+    @DeleteMapping
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
+    public void deleteUserRoles(@RequestParam @NotNull Long userId) {
+        userRoleService.deleteUserRoles(userId);
+    }
+
+    /**
+     * 管理员删除用户某一个角色
+     * @param userId userId
+     * @param roleEnum roleEnum
+     */
+    @DeleteMapping
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
+    public void deleteUserRole(@RequestParam @NotNull Long userId, @RequestParam @NotNull RoleEnum roleEnum) {
+        userRoleService.deleteUserRole(userId, roleEnum);
     }
 
 }

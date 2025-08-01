@@ -92,8 +92,7 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         boolean remove = userRepository.removeById(id);
         ThrowUtils.throwIf(!remove, "User delete failed, maybe the user does not exist");
-        boolean delete = userRoleService.deleteUserRoles(id);
-        ThrowUtils.throwIf(!delete, "User roles delete failed, maybe the user roles does not exist");
+        userRoleService.deleteUserRoles(id);
     }
 
     @Override

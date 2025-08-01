@@ -7,6 +7,7 @@ import com.xxx.aimianshi.userrole.repository.UserRoleRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRoleRepositoryImpl extends ServiceImpl<UserRoleMapper, UserRole> implements UserRoleRepository {
@@ -16,5 +17,13 @@ public class UserRoleRepositoryImpl extends ServiceImpl<UserRoleMapper, UserRole
         return lambdaQuery()
                 .eq(UserRole::getUserId, userId)
                 .list();
+    }
+
+    @Override
+    public Optional<UserRole> getOptByUserIdAndRole(Long userId, String roleName) {
+        return lambdaQuery()
+                .eq(UserRole::getUserId, userId)
+                .eq(UserRole::getRoleId, roleName)
+                .oneOpt();
     }
 }

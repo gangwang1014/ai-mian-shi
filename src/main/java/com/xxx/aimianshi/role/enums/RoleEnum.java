@@ -15,4 +15,13 @@ public enum RoleEnum {
     RoleEnum(String name) {
         this.name = name;
     }
+
+    public static RoleEnum formName(String name) {
+        for (RoleEnum value : values()) {
+            if (value.name.equals(name)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("RoleEnum not found");
+    }
 }
