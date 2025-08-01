@@ -7,6 +7,8 @@ import com.xxx.aimianshi.user.domain.req.UserUpdateReq;
 import com.xxx.aimianshi.user.domain.resp.UserDetailResp;
 import com.xxx.aimianshi.user.domain.resp.UserLoginResp;
 
+import java.util.List;
+
 public interface UserService {
 
     void register(UserRegisterReq userRegisterReq);
@@ -22,4 +24,6 @@ public interface UserService {
     void changePassword(ChangePasswordReq changePasswordReq);
 
     void userSignIn();
+
+    List<Integer> userSignInRecord(Integer year);
 }

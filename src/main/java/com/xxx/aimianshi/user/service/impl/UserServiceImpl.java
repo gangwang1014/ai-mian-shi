@@ -28,6 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.BitSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -120,6 +123,26 @@ public class UserServiceImpl implements UserService {
         } else {
             log.info("user {} already signed, date: {}", userId, date);
         }
+    }
+
+    @Override
+    public List<Integer> userSignInRecord(Integer year) {
+        if (Objects.isNull(year)) {
+            year = LocalDate.now().getYear();
+        }
+        Long userId = UserContext.getCurrentUserId();
+
+        String userSignKey = RedisKeyManger.getUserSignKey(year, userId);
+        RBitSet signInBitSet = redissonClient.getBitSet(userSignKey);
+        // 加载到 bitset 中, 避免多次访问 redis
+        BitSet bitSet = signInBitSet.asBitSet();
+        List<Integer> signDays = new LinkedList<>();
+        int idx = bitSet.nextSetBit(0);
+        while (idx >= 0) {
+            signDays.add(idx);
+            idx = bitSet.nextSetBit(idx + 1);
+        }
+        return signDays;
     }
 
     private String createToken(Long userId) {
