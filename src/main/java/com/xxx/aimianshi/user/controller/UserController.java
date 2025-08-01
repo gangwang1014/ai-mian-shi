@@ -51,4 +51,9 @@ public class UserController {
     public void changePassword(@RequestBody ChangePasswordReq changePasswordReq) {
         userService.changePassword(changePasswordReq);
     }
+
+    @PutMapping("/sign-in")
+    public void userSignIn() {
+        userService.userSignIn();
+    }
 }

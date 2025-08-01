@@ -1,8 +1,10 @@
 package com.xxx.aimianshi.user.service.impl;
 
 import com.xxx.aimianshi.common.client.JwtClient;
+import com.xxx.aimianshi.common.constant.RedisKeyManger;
 import com.xxx.aimianshi.common.exception.BizException;
 import com.xxx.aimianshi.common.utils.ThrowUtils;
+import com.xxx.aimianshi.common.utils.UserContext;
 import com.xxx.aimianshi.role.enums.RoleEnum;
 import com.xxx.aimianshi.user.constant.UserConstant;
 import com.xxx.aimianshi.user.convert.UserConverter;
@@ -17,13 +19,20 @@ import com.xxx.aimianshi.user.repository.UserRepository;
 import com.xxx.aimianshi.user.service.UserService;
 import com.xxx.aimianshi.userrole.service.UserRoleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBitSet;
+import org.redisson.api.RedissonClient;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -35,6 +44,8 @@ public class UserServiceImpl implements UserService {
     private final JwtClient jwtClient;
 
     private final UserRoleService userRoleService;
+
+    private final RedissonClient redissonClient;
 
     @Override
     @Transactional
@@ -90,6 +101,25 @@ public class UserServiceImpl implements UserService {
         ThrowUtils.throwIf(!update, "password update failed");
 
         // todo 踢人下线
+    }
+
+    @Override
+    public void userSignIn() {
+        Long userId = UserContext.getCurrentUserId();
+        ThrowUtils.throwIf(Objects.isNull(userId), "userId is null");
+
+        LocalDate date = LocalDate.now();
+        String userSignKey = RedisKeyManger.getUserSignKey(date.getYear(), userId);
+        RBitSet bitSet = redissonClient.getBitSet(userSignKey);
+        int offset = date.getDayOfYear();
+
+        boolean alreadySigned = bitSet.set(offset, true);
+
+        if (!alreadySigned) {
+            log.info("user {} sign in, date: {}", userId, date);
+        } else {
+            log.info("user {} already signed, date: {}", userId, date);
+        }
     }
 
     private String createToken(Long userId) {
