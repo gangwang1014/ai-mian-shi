@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/bank-question")
 public class QuestionBankQuestionController {
@@ -48,5 +50,17 @@ public class QuestionBankQuestionController {
     @PostMapping("/es/page")
     public IPage<QuestionResp> esPageQuestionBankQuestion(@RequestBody PageQuestionBankQuestionReq req) {
         return questionBankQuestionService.queryQuestionWithEsFallback(req);
+    }
+
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('insert', 'all')")
+    @PostMapping("/batch")
+    public void batchAddQuestionToBank(@RequestBody List<@NotNull Long> questionIds, @RequestParam @NotNull Long questionBankId) {
+        questionBankQuestionService.batchAddQuestionToBank(questionIds, questionBankId);
+    }
+
+    @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
+    @DeleteMapping("/batch")
+    public void batchDeleteQuestionToBank(@RequestBody List<@NotNull Long> questionBankQuestionIds) {
+        questionBankQuestionService.batchDeleteQuestionToBank(questionBankQuestionIds);
     }
 }

@@ -18,10 +18,12 @@ import com.xxx.aimianshi.question.domain.es.QuestionEs;
 import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import com.xxx.aimianshi.question.repository.QuestionRepository;
 import com.xxx.aimianshi.questionbank.convert.QuestionBankQuestionConverter;
+import com.xxx.aimianshi.questionbank.domain.entity.QuestionBank;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBankQuestion;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionToBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankQuestionReq;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
+import com.xxx.aimianshi.questionbank.repository.QuestionBankRepository;
 import com.xxx.aimianshi.questionbank.service.QuestionBankQuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,16 +55,20 @@ public class QuestionBankQuestionServiceImpl implements QuestionBankQuestionServ
 
     private final ElasticsearchOperations elasticsearchOperations;
 
+    private final QuestionBankRepository questionBankRepository;
+
     @Override
     public void addQuestionToBank(AddQuestionToBankReq addQuestionToBankReq) {
         QuestionBankQuestion entity = questionBankQuestionConverter.toEntity(addQuestionToBankReq);
+        // 校验参数是否合法 是否有这个题库和 题目
+        ThrowUtils.throwIf(!validateQuestionAndBank(entity), "question or bank does not exist");
         try {
             questionBankQuestionRepository.save(entity);
         } catch (DuplicateKeyException e) {
             throw new BizException("question already in the bank");
         }
-
     }
+
 
     @Override
     public void deleteQuestionBank(Long id) {
@@ -112,6 +118,23 @@ public class QuestionBankQuestionServiceImpl implements QuestionBankQuestionServ
             log.error("ES 查询失败，使用数据库降级查询：{}", e.getMessage());
             return pageQuestionBankQuestion(req);
         }
+    }
+
+    @Override
+    public void batchAddQuestionToBank(List<Long> questionIds, Long questionBankId) {
+        questionBankRepository.getOptById(questionBankId)
+                .orElseThrow(() -> new BizException("question bank may not exist"));
+        // 获取合法的 questionIds
+        List<Long> validQuestionIds = getValidAndNotExistQuestionIds(questionIds, questionBankId);
+        List<QuestionBankQuestion> questionBankQuestionList = validQuestionIds.stream()
+                .map(questionId -> new QuestionBankQuestion(null, questionId, questionBankId))
+                .toList();
+        questionBankQuestionRepository.saveBatch(questionBankQuestionList);
+    }
+
+    @Override
+    public void batchDeleteQuestionToBank(List<Long> questionBankQuestionIds) {
+        questionBankQuestionRepository.removeBatchByIds(questionBankQuestionIds);
     }
 
     private List<Long> getQuestionIdsByBankId(Long questionBankId) {
@@ -195,5 +218,36 @@ public class QuestionBankQuestionServiceImpl implements QuestionBankQuestionServ
             }
         }
         return wrapper;
+    }
+
+    private boolean validateQuestionAndBank(QuestionBankQuestion questionBankQuestion) {
+        Long questionId = questionBankQuestion.getQuestionId();
+        Question question = questionRepository.getById(questionId);
+        Long questionBankId = questionBankQuestion.getQuestionBankId();
+        QuestionBank questionBank = questionBankRepository.getById(questionBankId);
+        return question != null && questionBank != null;
+    }
+
+    public List<Long> getValidAndNotExistQuestionIds(List<Long> questionIds, Long questionBankId) {
+        List<Long> validQuestionIds = getValidQuestionIds(questionIds);
+        List<Long> existQuestionIds = getExistQuestionIds(questionBankId, validQuestionIds);
+        return validQuestionIds.stream()
+                .filter(questionId -> !existQuestionIds.contains(questionId))
+                .toList();
+    }
+
+    private List<Long> getExistQuestionIds(Long questionBankId, List<Long> validQuestionIds) {
+        List<QuestionBankQuestion> questionBankQuestions = questionBankQuestionRepository.getByQuestionIdsAndQuestionBankId(validQuestionIds, questionBankId);
+        return questionBankQuestions
+                .stream()
+                .map(QuestionBankQuestion::getQuestionId)
+                .toList();
+    }
+
+    private List<Long> getValidQuestionIds(List<Long> questionIds) {
+        return questionRepository.listByIds(questionIds)
+                .stream()
+                .map(Question::getId)
+                .toList();
     }
 }
