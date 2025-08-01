@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxx.aimianshi.common.utils.UserContext;
 import com.xxx.aimianshi.question.domain.entity.Question;
+import com.xxx.aimianshi.question.domain.es.QuestionEs;
 import com.xxx.aimianshi.question.domain.req.AddQuestionReq;
 import com.xxx.aimianshi.question.domain.req.UpdateQuestionReq;
 import com.xxx.aimianshi.question.domain.resp.QuestionResp;
@@ -59,4 +60,10 @@ public interface QuestionConverter {
             @Mapping(target = "tags", expression = "java(toJson(updateQuestionReq.getTags()))")
     })
     Question toEntity(UpdateQuestionReq updateQuestionReq);
+
+    QuestionEs toQuestionEs(Question question);
+
+    Question toEntity(QuestionEs questionEs);
+
+    QuestionResp toQuestionResp(QuestionEs questionEs);
 }

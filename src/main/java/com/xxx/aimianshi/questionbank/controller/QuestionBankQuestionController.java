@@ -41,4 +41,12 @@ public class QuestionBankQuestionController {
     public IPage<QuestionResp> pageQuestionBankQuestion(@RequestBody PageQuestionBankQuestionReq req) {
         return questionBankQuestionService.pageQuestionBankQuestion(req);
     }
+
+    /**
+     * es 分页查询题库的题目
+     */
+    @PostMapping("/es/page")
+    public IPage<QuestionResp> esPageQuestionBankQuestion(@RequestBody PageQuestionBankQuestionReq req) {
+        return questionBankQuestionService.queryQuestionWithEsFallback(req);
+    }
 }

@@ -13,4 +13,8 @@ public interface QuestionBankQuestionService {
     void deleteQuestionBank(@NotNull Long id);
 
     IPage<QuestionResp> pageQuestionBankQuestion(PageQuestionBankQuestionReq req);
+
+    IPage<QuestionResp> esPageQuestionBankQuestion(PageQuestionBankQuestionReq req);
+
+    IPage<QuestionResp> queryQuestionWithEsFallback(PageQuestionBankQuestionReq req);
 }

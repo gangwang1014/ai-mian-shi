@@ -20,4 +20,6 @@ public final class CommonConstant {
      * 降序
      */
     public static final String SORT_ORDER_DESC = " descend";
+
+    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 }
