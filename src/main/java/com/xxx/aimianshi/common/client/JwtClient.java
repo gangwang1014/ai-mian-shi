@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -63,6 +64,17 @@ public class JwtClient {
                 .expiration(expiration)
                 .subject(claimKey)
                 .claim(claimKey, claimValue)
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String createToken(Map<String, Object> claims) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + jwtProperties.getTtl());
+        return Jwts.builder()
+                .issuedAt(now)
+                .expiration(expiration)
+                .claims(claims)
                 .signWith(secretKey)
                 .compact();
     }

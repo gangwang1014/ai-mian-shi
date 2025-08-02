@@ -517,6 +517,12 @@ public class RedisCacheImpl implements RedisCache {
     }
 
     @Override
+    public void zSetAdd(String key, Object value, double score, long timeout, TimeUnit timeUnit) {
+        redisTemplate.opsForZSet().add(key, value, score);
+        redisTemplate.expire(key, timeout, timeUnit);
+    }
+
+    @Override
     public Long zSetRemove(String key, Object... values) {
         return redisTemplate.opsForZSet().remove(key, values);
     }
@@ -702,18 +708,61 @@ public class RedisCacheImpl implements RedisCache {
     }
 
     @Override
-    public Long zIntersectAndStore(String key, String otherKey, String destKey) {
+    public Long zSetIntersectAndStore(String key, String otherKey, String destKey) {
         return redisTemplate.opsForZSet().intersectAndStore(key, otherKey, destKey);
     }
 
     @Override
-    public Long zIntersectAndStore(String key, Collection<String> otherKeys, String destKey) {
+    public Long zSetIntersectAndStore(String key, Collection<String> otherKeys, String destKey) {
         return redisTemplate.opsForZSet().intersectAndStore(key, otherKeys, destKey);
     }
 
     @Override
-    public Cursor<ZSetOperations.TypedTuple<Object>> zScan(String key, ScanOptions options) {
+    public Cursor<ZSetOperations.TypedTuple<Object>> zSetScan(String key, ScanOptions options) {
         return redisTemplate.opsForZSet().scan(key, options);
+    }
+
+    @Override
+    public void zSetPopMin(String key) {
+        redisTemplate.opsForZSet().popMin(key);
+    }
+
+    @Override
+    public <T> Optional<T> zSetPopMin(String key, Class<T> clazz) {
+        return Optional.ofNullable(redisTemplate.opsForZSet().popMin(key))
+                .map(ZSetOperations.TypedTuple::getValue)
+                .map(clazz::cast);
+    }
+
+    @Override
+    public <T> Set<T> zSetPopMin(String key, long count, Class<T> clazz) {
+        Set<ZSetOperations.TypedTuple<Object>> typedTuples = redisTemplate.opsForZSet().popMin(key, count);
+        if (typedTuples == null) {
+            return Collections.emptySet();
+        }
+        return typedTuples.stream()
+                .map(ZSetOperations.TypedTuple::getValue)
+                .map(clazz::cast)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public <T> Optional<T> zSetPopMax(String key, Class<T> clazz) {
+        return Optional.ofNullable(redisTemplate.opsForZSet().popMax(key))
+                .map(ZSetOperations.TypedTuple::getValue)
+                .map(clazz::cast);
+    }
+
+    @Override
+    public <T> Set<T> zSetPopMax(String key, long count, Class<T> clazz) {
+        Set<ZSetOperations.TypedTuple<Object>> typedTuples = redisTemplate.opsForZSet().popMax(key, count);
+        if (typedTuples == null) {
+            return Collections.emptySet();
+        }
+        return typedTuples.stream()
+                .map(ZSetOperations.TypedTuple::getValue)
+                .map(clazz::cast)
+                .collect(Collectors.toSet());
     }
 
 }

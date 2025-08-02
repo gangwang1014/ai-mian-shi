@@ -40,7 +40,7 @@ public class UserRoleController {
      * @param userId userId
      * @param roleEnum roleEnum
      */
-    @DeleteMapping
+    @DeleteMapping("/role")
     @PreAuthorize("hasRole('admin') or hasAnyAuthority('delete', 'all')")
     public void deleteUserRole(@RequestParam @NotNull Long userId, @RequestParam @NotNull RoleEnum roleEnum) {
         userRoleService.deleteUserRole(userId, roleEnum);

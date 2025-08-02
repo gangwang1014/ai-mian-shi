@@ -26,4 +26,6 @@ public interface UserService {
     void userSignIn();
 
     List<Integer> userSignInRecord(Integer year);
+
+    void logout(Long userId);
 }

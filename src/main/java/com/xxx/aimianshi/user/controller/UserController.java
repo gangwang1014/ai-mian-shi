@@ -32,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public void logout() {
-        // todo logout
+    public void logout(@RequestParam @NotNull Long userId) {
+        userService.logout(userId);
     }
 
     @GetMapping("/{id:\\d+}")

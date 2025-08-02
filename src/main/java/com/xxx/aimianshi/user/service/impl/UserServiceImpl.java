@@ -1,5 +1,6 @@
 package com.xxx.aimianshi.user.service.impl;
 
+import cn.hutool.core.lang.UUID;
 import com.xxx.aimianshi.common.client.JwtClient;
 import com.xxx.aimianshi.common.constant.RedisKeyManger;
 import com.xxx.aimianshi.common.exception.BizException;
@@ -15,6 +16,8 @@ import com.xxx.aimianshi.user.domain.req.UserRegisterReq;
 import com.xxx.aimianshi.user.domain.req.UserUpdateReq;
 import com.xxx.aimianshi.user.domain.resp.UserDetailResp;
 import com.xxx.aimianshi.user.domain.resp.UserLoginResp;
+import com.xxx.aimianshi.user.domain.token.UserToken;
+import com.xxx.aimianshi.user.repository.TokenRepository;
 import com.xxx.aimianshi.user.repository.UserRepository;
 import com.xxx.aimianshi.user.service.UserService;
 import com.xxx.aimianshi.userrole.service.UserRoleService;
@@ -28,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.BitSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +49,8 @@ public class UserServiceImpl implements UserService {
     private final UserRoleService userRoleService;
 
     private final RedissonClient redissonClient;
+
+    private final TokenRepository tokenRepository;
 
     @Override
     @Transactional
@@ -69,7 +71,9 @@ public class UserServiceImpl implements UserService {
     public UserLoginResp login(UserLoginReq userLoginReq) {
         User user = userRepository.getOptByAccount(userLoginReq.getAccount())
                 .orElseThrow(() -> new BizException("Incorrect account or password"));
-        String token = createToken(user.getId());
+        String tokenId = generateUUID();
+        String token = createToken(user.getId(), tokenId);
+        tokenRepository.saveUserToken(new UserToken(user.getId(), tokenId, token));
         return userConverter.toUserLoginResp(user, token);
     }
 
@@ -102,7 +106,8 @@ public class UserServiceImpl implements UserService {
         boolean update = userRepository.updateById(user);
         ThrowUtils.throwIf(!update, "password update failed");
 
-        // todo 踢人下线
+        // 清理用户所有的 token
+        tokenRepository.deleteUserTokenSetAndUserAllToken(user.getId());
     }
 
     @Override
@@ -144,7 +149,23 @@ public class UserServiceImpl implements UserService {
         return signDays;
     }
 
-    private String createToken(Long userId) {
-        return jwtClient.createToken(UserConstant.USER_ID, userId);
+    @Override
+    public void logout(Long userId) {
+        String tokenId = UserContext.getCurrentUserTokenId();
+        // 删除 tokens 里面的 tokenId
+        tokenRepository.deleteUserTokenSetTokenId(userId, tokenId);
+        tokenRepository.deleteUserToken(userId, tokenId);
+    }
+
+    private String createToken(Long userId, String tokenId) {
+        Map<String, Object> claims = new HashMap<>();
+        // 存入 userId, tokenId, version
+        claims.put(UserConstant.USER_ID, userId);
+        claims.put(UserConstant.TOKEN_ID, tokenId);
+        return jwtClient.createToken(claims);
+    }
+
+    private String generateUUID() {
+        return UUID.randomUUID().toString(true);
     }
 }

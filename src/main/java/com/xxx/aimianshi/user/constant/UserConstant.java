@@ -13,4 +13,10 @@ public final class UserConstant {
             "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*])[^\\s]{8,16}$";
 
     public static final String USER_ID = "userId";
+
+    public static final String TOKEN_ID = "tokenId";
+
+    public static final String TOKEN_VERSION = "version";
+
+    public static final Integer MAX_LOGIN_COUNT = 3;
 }
