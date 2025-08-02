@@ -2,6 +2,7 @@ package com.xxx.aimianshi.questionbank.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xxx.aimianshi.question.domain.resp.QuestionResp;
+import com.xxx.aimianshi.questionbank.domain.entity.QuestionBankQuestion;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionToBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankQuestionReq;
 
@@ -22,4 +23,6 @@ public interface QuestionBankQuestionService {
     void batchAddQuestionToBank(List<Long> questionIds, Long questionBankId);
 
     void batchDeleteQuestionToBank(List<Long> questionBankQuestionIds);
+
+    void batchSaveBankQuestions(List<QuestionBankQuestion> questionBankQuestions);
 }

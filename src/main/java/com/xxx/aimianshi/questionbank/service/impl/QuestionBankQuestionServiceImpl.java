@@ -27,6 +27,7 @@ import com.xxx.aimianshi.questionbank.repository.QuestionBankRepository;
 import com.xxx.aimianshi.questionbank.service.QuestionBankQuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
@@ -35,9 +36,15 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -129,7 +136,51 @@ public class QuestionBankQuestionServiceImpl implements QuestionBankQuestionServ
         List<QuestionBankQuestion> questionBankQuestionList = validQuestionIds.stream()
                 .map(questionId -> new QuestionBankQuestion(null, questionId, questionBankId))
                 .toList();
-        questionBankQuestionRepository.saveBatch(questionBankQuestionList);
+
+        // 定义线程池来批量保存
+        ThreadPoolExecutor customThreadPool = createThreadPool();
+
+        List<CompletableFuture<Void>> futures = new LinkedList<>();
+        int batchSize = 1000;
+
+        int size = questionBankQuestionList.size();
+        log.info("batch save question to bank, total: {}, batchSize: {}", size, batchSize);
+        for (int i = 0; i < size; i += batchSize) {
+            List<QuestionBankQuestion> subList = questionBankQuestionList
+                    .subList(i, Math.min(i + batchSize, size));
+
+            // 获取代理对象
+            QuestionBankQuestionService questionBankQuestionService =
+                    (QuestionBankQuestionServiceImpl) AopContext.currentProxy();
+
+            // 异步处理每批数据，将任务添加到异步任务列表
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() ->
+                    questionBankQuestionService.batchSaveBankQuestions(subList), customThreadPool);
+            futures.add(future);
+        }
+        // 等待所有批次完成操作
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        log.info("batch save question to bank success");
+        // 关闭线程池
+        customThreadPool.shutdown();
+    }
+
+    // 避免长事务
+    @Transactional
+    @Override
+    public void batchSaveBankQuestions(List<QuestionBankQuestion> questionBankQuestions) {
+        questionBankQuestionRepository.saveBatch(questionBankQuestions);
+    }
+
+    private ThreadPoolExecutor createThreadPool() {
+        return new ThreadPoolExecutor(
+                10,
+                20,
+                60,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(10000),
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
     }
 
     @Override

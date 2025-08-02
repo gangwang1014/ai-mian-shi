@@ -47,7 +47,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
                         // 查看是否是被清除的 token
                         if (!checkTokenExist(userId, tokenId)) {
-                            throw new TokenAuthenticationException("Token not exist");
+                            throw new TokenAuthenticationException("Token not exist, please login again");
                         }
 
                         // 设置用户上下文信息
