@@ -595,6 +595,8 @@ public interface RedisCache {
      */
     Long listRightPushAll(String key, Object... values);
 
+    Long listRightPushAll(String key, long  timeout, TimeUnit timeUnit, Object... values);
+
     /**
      * 列表右插入集合
      *
@@ -606,6 +608,8 @@ public interface RedisCache {
      * @since 0.1.0
      */
     Long listRightPushAll(String key, Collection<Object> values);
+
+    Long listRightPushAll(String key, Collection<Object> values, long timeout, TimeUnit timeUnit);
 
     /**
      * 仅当列表存在时右插入值

@@ -98,12 +98,12 @@ public class RedisCacheImpl implements RedisCache {
 
     @Override
     public long getExpire(String key) {
-	    return redisTemplate.getExpire(key);
+        return redisTemplate.getExpire(key);
     }
 
     @Override
     public long getExpire(String key, TimeUnit timeUnit) {
-	    return redisTemplate.getExpire(key, timeUnit);
+        return redisTemplate.getExpire(key, timeUnit);
     }
 
     @Override
@@ -279,8 +279,22 @@ public class RedisCacheImpl implements RedisCache {
     }
 
     @Override
+    public Long listRightPushAll(String key, long timeout, TimeUnit timeUnit, Object... values) {
+        Long pushSize = redisTemplate.opsForList().rightPushAll(key, values);
+        redisTemplate.expire(key, timeout, timeUnit);
+        return pushSize;
+    }
+
+    @Override
     public Long listRightPushAll(String key, Collection<Object> values) {
         return redisTemplate.opsForList().rightPushAll(key, values);
+    }
+
+    @Override
+    public Long listRightPushAll(String key, Collection<Object> values, long timeout, TimeUnit timeUnit) {
+        Long pushSize = redisTemplate.opsForList().rightPushAll(key, values);
+        redisTemplate.expire(key, timeout, timeUnit);
+        return pushSize;
     }
 
     @Override
@@ -338,6 +352,7 @@ public class RedisCacheImpl implements RedisCache {
     public Long listRemove(String key, long count, Object value) {
         return redisTemplate.opsForList().remove(key, count, value);
     }
+
     @Override
     public Long listRemoveAll(String key, Object value) {
         return redisTemplate.opsForList().remove(key, 0, value);
@@ -391,7 +406,7 @@ public class RedisCacheImpl implements RedisCache {
 
     @Override
     public Boolean setIsMember(String key, Object value) {
-        return redisTemplate.opsForSet().isMember(key,  value);
+        return redisTemplate.opsForSet().isMember(key, value);
     }
 
     @Override
@@ -517,7 +532,7 @@ public class RedisCacheImpl implements RedisCache {
 
     @Override
     public Cursor<Object> setScan(String key, ScanOptions options) {
-	    return redisTemplate.opsForSet().scan(key, options);
+        return redisTemplate.opsForSet().scan(key, options);
     }
 
     @Override

@@ -31,7 +31,12 @@ public class QuestionBankQuestionRepositoryImpl extends ServiceImpl<QuestionBank
         List<QuestionBankQuestion> bankQuestions = lambdaQuery()
                 .eq(QuestionBankQuestion::getQuestionBankId, questionBankId)
                 .list();
-        redisCache.listRightPush(RedisKeyManger.getBankQuestionKey(questionBankId), bankQuestions);
+        redisCache.listRightPushAll(
+                RedisKeyManger.getBankQuestionKey(questionBankId),
+                bankQuestions,
+                RedisKeyManger.QUESTION_EXPIRE_TIME,
+                RedisKeyManger.TIME_UNIT
+        );
         return bankQuestions;
     }
 

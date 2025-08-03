@@ -5,9 +5,11 @@ import java.util.concurrent.TimeUnit;
 public final class RedisKeyManger {
     private RedisKeyManger(){}
 
-    public static final Integer TOKEN_EXPIRE_TIME = 30;
+    public static final Long TOKEN_EXPIRE_TIME = 30L;
 
     public static final TimeUnit TIME_UNIT = TimeUnit.DAYS;
+
+    public static final Long QUESTION_EXPIRE_TIME = 7L;
 
     // token:{userId}:{tokenId}
     public static final String TOKEN = "token";
