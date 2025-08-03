@@ -235,6 +235,15 @@ public class RedisCacheImpl implements RedisCache {
     }
 
     @Override
+    public <T> List<T> listRangeAll(String key, Class<T> clazz) {
+        List<Object> range = redisTemplate.opsForList().range(key, 0, -1);
+        if (range == null) {
+            return List.of();
+        }
+        return range.stream().map(clazz::cast).toList();
+    }
+
+    @Override
     public Long listLeftPush(String key, Object value) {
         return redisTemplate.opsForList().leftPush(key, value);
     }

@@ -503,6 +503,14 @@ public interface RedisCache {
     <T> List<T> listRange(String key, long start, long end, Class<T> clazz);
 
     /**
+     * 获取列表所有元素
+     * @param key 键
+     * @param clazz 元素类型
+     * @return List<T> 元素集合
+     */
+    <T> List<T> listRangeAll(String key, Class<T> clazz);
+
+    /**
      * 左插入到列表
      *
      * @param key   列表key

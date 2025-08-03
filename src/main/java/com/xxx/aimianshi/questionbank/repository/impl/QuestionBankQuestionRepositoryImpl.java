@@ -1,31 +1,38 @@
-package com.xxx.aimianshi.questionbank.repository.impl.impl;
+package com.xxx.aimianshi.questionbank.repository.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xxx.aimianshi.common.client.RedisCache;
+import com.xxx.aimianshi.common.constant.RedisKeyManger;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBankQuestion;
 import com.xxx.aimianshi.questionbank.mapper.QuestionBankQuestionMapper;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class QuestionBankQuestionRepositoryImpl extends ServiceImpl<QuestionBankQuestionMapper, QuestionBankQuestion>
         implements QuestionBankQuestionRepository {
 
-    @Override
-    public List<QuestionBankQuestion> getByQuestionBankId(Long questionBankId) {
-        return lambdaQuery()
-                .eq(QuestionBankQuestion::getQuestionBankId, questionBankId)
-                .list();
+    private final RedisCache redisCache;
+
+    public QuestionBankQuestionRepositoryImpl(RedisCache redisCache) {
+        this.redisCache = redisCache;
     }
 
     @Override
-    public void removeByQuestionId(Long questionId) {
-        lambdaUpdate()
-                .eq(QuestionBankQuestion::getQuestionId, questionId)
-                .remove();
+    public List<QuestionBankQuestion> getByQuestionBankId(Long questionBankId) {
+        List<QuestionBankQuestion> questionBankQuestions = redisCache
+                .listRangeAll(RedisKeyManger.getBankQuestionKey(questionBankId), QuestionBankQuestion.class);
+        if (CollUtil.isNotEmpty(questionBankQuestions)) {
+            return questionBankQuestions;
+        }
+        List<QuestionBankQuestion> bankQuestions = lambdaQuery()
+                .eq(QuestionBankQuestion::getQuestionBankId, questionBankId)
+                .list();
+        redisCache.listRightPush(RedisKeyManger.getBankQuestionKey(questionBankId), bankQuestions);
+        return bankQuestions;
     }
 
     @Override
@@ -33,21 +40,6 @@ public class QuestionBankQuestionRepositoryImpl extends ServiceImpl<QuestionBank
         lambdaUpdate()
                 .in(CollUtil.isNotEmpty(questionIds), QuestionBankQuestion::getQuestionId, questionIds)
                 .remove();
-    }
-
-    @Override
-    public Optional<QuestionBankQuestion> getOptByQuestionIdAndQuestionBankId(Long questionId, Long questionBankId) {
-        return lambdaQuery()
-                .eq(QuestionBankQuestion::getQuestionId, questionId)
-                .eq(QuestionBankQuestion::getQuestionBankId, questionBankId)
-                .oneOpt();
-    }
-
-    @Override
-    public List<QuestionBankQuestion> getByQuestionIds(List<Long> questionIds) {
-        return lambdaQuery()
-                .in(CollUtil.isNotEmpty(questionIds), QuestionBankQuestion::getQuestionId, questionIds)
-                .list();
     }
 
     @Override

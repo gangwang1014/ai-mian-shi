@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public final class RedisKeyManger {
     private RedisKeyManger(){}
 
-    public static final Integer TOKEN_EXPIRE_TIME = 7;
+    public static final Integer TOKEN_EXPIRE_TIME = 30;
 
     public static final TimeUnit TIME_UNIT = TimeUnit.DAYS;
 
@@ -16,7 +16,10 @@ public final class RedisKeyManger {
     public static final String USER_TOKENS = "user:tokens";
 
     // user:sign:{year}:{userId}
-    public static final String USER_SIGN_PREFIX = "user:sign";
+    public static final String USER_SIGN = "user:sign";
+
+    // bank:question:{questionBankId}
+    public static final String BANK_QUESTION = "bank:question";
 
 
     public static String getUserTokenKey(Long userId, String tokenId) {
@@ -28,7 +31,11 @@ public final class RedisKeyManger {
     }
 
     public static String getUserSignKey(Integer year, Long userId) {
-        return getKey(USER_SIGN_PREFIX, year + ":" + userId);
+        return getKey(USER_SIGN, year + ":" + userId);
+    }
+
+    public static String getBankQuestionKey(Long questionBankId) {
+        return getKey(BANK_QUESTION, questionBankId.toString());
     }
 
     private static String getKey(String prefix, String key) {
