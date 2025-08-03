@@ -150,6 +150,23 @@
       <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
     </dependency>
 
+    <!--    install local repository-->
+    <dependency>
+      <groupId>com.jd.platform.hotkey</groupId>
+      <artifactId>hotkey-client</artifactId>
+      <version>0.0.4-SNAPSHOT</version>
+      <classifier>jar-with-dependencies</classifier>
+    </dependency>
+
+<!--    若是本地仓库没有 install hotkey-client 请使用如下方式引入-->
+<!--    <dependency>-->
+<!--      <artifactId>hotkey-client</artifactId>-->
+<!--      <groupId>com.jd.platform.hotkey</groupId>-->
+<!--      <version>0.0.4-SNAPSHOT</version>-->
+<!--      <scope>system</scope>-->
+<!--      <systemPath>${project.basedir}/lib/hotkey-client-0.0.4-SNAPSHOT.jar</systemPath>-->
+<!--    </dependency>-->
+
 
   </dependencies>
 

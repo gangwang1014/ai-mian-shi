@@ -91,3 +91,11 @@ jwt:
   secret-key: ${mianshiya.jwt.secret-key}
   ttl: ${mianshiya.jwt.ttl}
   token-name: ${mianshiya.jwt.token-name}
+
+# 热 key 探测
+hotkey:
+  app-name: aimianshi
+  caffeine-size: 10000
+  push-period: 1000
+  etcd-server: http://127.0.0.1:2379
+

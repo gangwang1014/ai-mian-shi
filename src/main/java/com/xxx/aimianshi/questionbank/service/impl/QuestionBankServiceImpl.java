@@ -5,6 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jd.platform.hotkey.client.callback.JdHotKeyStore;
+import com.xxx.aimianshi.common.constant.HoyKeyManger;
 import com.xxx.aimianshi.common.exception.BizException;
 import com.xxx.aimianshi.common.utils.ThrowUtils;
 import com.xxx.aimianshi.questionbank.convert.QuestionBankConverter;
@@ -18,6 +20,7 @@ import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankRepository;
 import com.xxx.aimianshi.questionbank.service.QuestionBankService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QuestionBankServiceImpl implements QuestionBankService {
 
     private final QuestionBankRepository questionBankRepository;
@@ -68,9 +72,20 @@ public class QuestionBankServiceImpl implements QuestionBankService {
 
     @Override
     public QuestionBankResp detailQuestionBank(Long id) {
+        // hotkey
+        String bankDetailKey = HoyKeyManger.getBankDetailKey(id);
+        if (JdHotKeyStore.isHotKey(bankDetailKey)) {
+            Object cacheQuestionBankDetail = JdHotKeyStore.get(bankDetailKey);
+            if (cacheQuestionBankDetail != null) {
+                log.info("is hotkey, cache question bank detail, key: {}", bankDetailKey);
+                return (QuestionBankResp) cacheQuestionBankDetail;
+            }
+        }
         QuestionBank questionBank = questionBankRepository.getOptById(id)
                 .orElseThrow(() -> new BizException("question bank may not exist"));
-        return questionBankConverter.toQuestionBankResp(questionBank);
+        QuestionBankResp questionBankResp = questionBankConverter.toQuestionBankResp(questionBank);
+        JdHotKeyStore.smartSet(bankDetailKey, questionBankResp);
+        return questionBankResp;
     }
 
     @Override
