@@ -7,11 +7,17 @@ spring:
   # 默认 dev 环境
   profiles:
     active: dev
+  ai:
+    dashscope:
+      api-key: ${dashscope.api-key}
+      chat:
+        options:
+          model: ${dashscope.chat.options.model:qwen-plus}
 
   datasource:
-    driver-class-name: ${mianshiya.datasource.driver-class-name}
-    url: jdbc:mysql://${mianshiya.datasource.host}:${mianshiya.datasource.port}/${mianshiya.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${mianshiya.datasource.username}
+    driver-class-name: ${mianshiya.datasource.driver-class-name:com.mysql.cj.jdbc.Driver}
+    url: jdbc:mysql://${mianshiya.datasource.host:localhost}:${mianshiya.datasource.port:3306}/${mianshiya.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${mianshiya.datasource.username:root}
     password: ${mianshiya.datasource.password}
     # Druid datasource
     type: com.alibaba.druid.pool.DruidDataSource
@@ -94,8 +100,8 @@ mybatis-plus:
       logic-not-delete-value: 0
 jwt:
   secret-key: ${mianshiya.jwt.secret-key}
-  ttl: ${mianshiya.jwt.ttl}
-  token-name: ${mianshiya.jwt.token-name}
+  ttl: ${mianshiya.jwt.ttl:2592000000}
+  token-name: ${mianshiya.jwt.token-name:Authorization}
 
 # 热 key 探测
 hotkey:
