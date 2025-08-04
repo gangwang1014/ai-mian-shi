@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,8 @@ public class RedisConfig {
 				ObjectMapper.DefaultTyping.NON_FINAL,
 				JsonTypeInfo.As.PROPERTY
 		);
+		// 支持 Java 8 时间类型
+		objectMapper.registerModule(new JavaTimeModule());
 		return new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
 	}
 

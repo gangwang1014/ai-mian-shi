@@ -1,6 +1,8 @@
 package com.xxx.aimianshi.common.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +19,12 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RedisCacheImpl implements RedisCache {
 
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private final ObjectMapper objectMapper;
 
     @Override
     public void set(String key, Object value) {
@@ -249,13 +254,15 @@ public class RedisCacheImpl implements RedisCache {
     }
 
     @Override
-    public Long listLeftPushAll(String key, Object... values) {
-        return redisTemplate.opsForList().leftPushAll(key, values);
+    public <T> Long listLeftPushAll(String key, Collection<T> values) {
+        return redisTemplate.opsForList().leftPushAll(key, new ArrayList<>(values));
     }
 
     @Override
-    public Long listLeftPushAll(String key, Collection<Object> values) {
-        return redisTemplate.opsForList().leftPushAll(key, values);
+    public <T> Long listLeftPushAll(String key, Collection<T> values, long timeout, TimeUnit timeUnit) {
+        Long pushSize = redisTemplate.opsForList().leftPushAll(key, new ArrayList<>(values));
+        redisTemplate.expire(key, timeout, timeUnit);
+        return pushSize;
     }
 
     @Override
@@ -274,25 +281,14 @@ public class RedisCacheImpl implements RedisCache {
     }
 
     @Override
-    public Long listRightPushAll(String key, Object... values) {
-        return redisTemplate.opsForList().rightPushAll(key, values);
+    public <T> Long listRightPushAll(String key, Collection<T> values) {
+        return redisTemplate.opsForList().rightPushAll(key, new ArrayList<>(values));
     }
 
     @Override
-    public Long listRightPushAll(String key, long timeout, TimeUnit timeUnit, Object... values) {
-        Long pushSize = redisTemplate.opsForList().rightPushAll(key, values);
-        redisTemplate.expire(key, timeout, timeUnit);
-        return pushSize;
-    }
-
-    @Override
-    public Long listRightPushAll(String key, Collection<Object> values) {
-        return redisTemplate.opsForList().rightPushAll(key, values);
-    }
-
-    @Override
-    public Long listRightPushAll(String key, Collection<Object> values, long timeout, TimeUnit timeUnit) {
-        Long pushSize = redisTemplate.opsForList().rightPushAll(key, values);
+    public <T> Long listRightPushAll(String key, Collection<T> values, long timeout, TimeUnit timeUnit) {
+        // 这里使用 new ArrayList 避免类型转换, 防止走 ...values 方法, 把整个 list 转换成 Object 然后存入
+        Long pushSize = redisTemplate.opsForList().rightPushAll(key, new ArrayList<>(values));
         redisTemplate.expire(key, timeout, timeUnit);
         return pushSize;
     }

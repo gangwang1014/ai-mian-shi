@@ -1,6 +1,8 @@
 package com.xxx.aimianshi.questionbank.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xxx.aimianshi.common.handler.SentinelBlockFallbackHandler;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.QuestionBankDetailReq;
@@ -27,6 +29,13 @@ public class QuestionBankController {
         questionBankService.addQuestionBank(addQuestionBankReq);
     }
 
+    @SentinelResource(
+            value = "questionBankDetailResource",
+            blockHandlerClass = SentinelBlockFallbackHandler.class,
+            blockHandler = "handleBlock",
+            fallbackClass = SentinelBlockFallbackHandler.class,
+            fallback = "handleFallback"
+    )
     @PostMapping("/detail")
     public QuestionBankDetailResp detailQuestionBank(@RequestBody QuestionBankDetailReq req) {
         return questionBankService.detailQuestionBank(req);

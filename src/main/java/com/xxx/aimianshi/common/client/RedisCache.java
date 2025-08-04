@@ -523,18 +523,6 @@ public interface RedisCache {
     Long listLeftPush(String key, Object value);
 
     /**
-     * 左插入多个值到列表
-     *
-     * @param key    列表key
-     * @param values 值数组
-     * @return Long 列表长度
-     * @author 红叶已尽秋
-     * @date 2025/4/9 20:57
-     * @since 0.1.0
-     */
-    Long listLeftPushAll(String key, Object... values);
-
-    /**
      * 左插入集合到列表
      *
      * @param key    键
@@ -544,7 +532,9 @@ public interface RedisCache {
      * @date 2025/6/7 9:56
      * @since 0.1.0
      */
-    Long listLeftPushAll(String key, Collection<Object> values);
+    <T> Long listLeftPushAll(String key, Collection<T> values);
+
+    <T> Long listLeftPushAll(String key, Collection<T> values, long timeout, TimeUnit timeUnit);
 
     /**
      * 仅当列表存在时左插入值
@@ -584,20 +574,6 @@ public interface RedisCache {
     Long listRightPush(String key, Object value);
 
     /**
-     * 列表右插入多个值
-     *
-     * @param key    键
-     * @param values 值数组
-     * @return Long 列表长度
-     * @author 红叶已尽秋
-     * @date 2025/6/7 10:08
-     * @since 0.1.0
-     */
-    Long listRightPushAll(String key, Object... values);
-
-    Long listRightPushAll(String key, long  timeout, TimeUnit timeUnit, Object... values);
-
-    /**
      * 列表右插入集合
      *
      * @param key    键
@@ -607,9 +583,9 @@ public interface RedisCache {
      * @date 2025/6/7 10:10
      * @since 0.1.0
      */
-    Long listRightPushAll(String key, Collection<Object> values);
+    <T> Long listRightPushAll(String key, Collection<T> values);
 
-    Long listRightPushAll(String key, Collection<Object> values, long timeout, TimeUnit timeUnit);
+    <T> Long listRightPushAll(String key, Collection<T> values, long timeout, TimeUnit timeUnit);
 
     /**
      * 仅当列表存在时右插入值
