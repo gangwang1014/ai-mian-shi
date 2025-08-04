@@ -1,9 +1,12 @@
 package com.xxx.aimianshi.questionbank.convert;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xxx.aimianshi.common.utils.UserContext;
+import com.xxx.aimianshi.question.domain.resp.QuestionResp;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBank;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankDetailResp;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,4 +33,9 @@ public interface QuestionBankConverter {
             @Mapping(target = "userId", expression = "java(UserContext.getCurrentUserId())")
     })
     QuestionBank toEntity(UpdateQuestionBankReq updateQuestionBankReq);
+
+    @Mappings({
+            @Mapping(target = "questions", source = "questions")
+    })
+    QuestionBankDetailResp toQuestionBankDetailResp(QuestionBank questionBank, IPage<QuestionResp> questions);
 }

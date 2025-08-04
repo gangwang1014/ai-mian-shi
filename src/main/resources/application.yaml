@@ -66,6 +66,11 @@ spring:
     uris: http://localhost:9200
     username:
     password:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8131
+        port: 8719
 
 
   # 文件上传

@@ -3,9 +3,10 @@ package com.xxx.aimianshi.questionbank.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.req.QuestionBankDetailReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankDetailResp;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
-import jakarta.validation.constraints.NotNull;
 
 public interface QuestionBankService {
 
@@ -15,7 +16,7 @@ public interface QuestionBankService {
 
     IPage<QuestionBankResp> pageQuestionBank(PageQuestionBankReq pageQuestionBankReq);
 
-    QuestionBankResp detailQuestionBank(@NotNull Long id);
+    QuestionBankDetailResp detailQuestionBank(QuestionBankDetailReq req);
 
     void updateQuestionBank(UpdateQuestionBankReq updateQuestionBankReq);
 }

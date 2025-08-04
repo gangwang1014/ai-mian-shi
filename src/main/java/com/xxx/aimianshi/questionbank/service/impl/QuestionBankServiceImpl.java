@@ -9,12 +9,18 @@ import com.jd.platform.hotkey.client.callback.JdHotKeyStore;
 import com.xxx.aimianshi.common.constant.HoyKeyManger;
 import com.xxx.aimianshi.common.exception.BizException;
 import com.xxx.aimianshi.common.utils.ThrowUtils;
+import com.xxx.aimianshi.question.convert.QuestionConverter;
+import com.xxx.aimianshi.question.domain.entity.Question;
+import com.xxx.aimianshi.question.domain.resp.QuestionResp;
+import com.xxx.aimianshi.question.repository.QuestionRepository;
 import com.xxx.aimianshi.questionbank.convert.QuestionBankConverter;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBank;
 import com.xxx.aimianshi.questionbank.domain.entity.QuestionBankQuestion;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.req.QuestionBankDetailReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankDetailResp;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankQuestionRepository;
 import com.xxx.aimianshi.questionbank.repository.QuestionBankRepository;
@@ -38,6 +44,10 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     private final QuestionBankConverter questionBankConverter;
 
     private final QuestionBankQuestionRepository questionBankQuestionRepository;
+
+    private final QuestionRepository questionRepository;
+
+    private final QuestionConverter questionConverter;
 
     @Override
     public void addQuestionBank(AddQuestionBankReq addQuestionBankReq) {
@@ -71,21 +81,50 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     }
 
     @Override
-    public QuestionBankResp detailQuestionBank(Long id) {
+    public QuestionBankDetailResp detailQuestionBank(QuestionBankDetailReq req) {
         // hotkey
-        String bankDetailKey = HoyKeyManger.getBankDetailKey(id);
+        Long questionBankId = req.getId();
+        // 从缓存中获取
+        String bankDetailKey = HoyKeyManger.getBankDetailKey(questionBankId);
+        QuestionBankDetailResp cacheQuestionBankDetail = getByHotkeyCache(bankDetailKey);
+        if (Objects.nonNull(cacheQuestionBankDetail)) {
+            return cacheQuestionBankDetail;
+        }
+
+        QuestionBank questionBank = questionBankRepository.getOptById(questionBankId)
+                .orElseThrow(() -> new BizException("question bank not exist"));
+
+        // 查询题库详情信息
+        int pageSize = req.getPageSize();
+        int current = req.getCurrent();
+        IPage<QuestionResp> questions = getPageQuestionResp(current, pageSize, questionBankId);
+
+        QuestionBankDetailResp questionBankResp = questionBankConverter.toQuestionBankDetailResp(questionBank, questions);
+
+        // hotkey 缓存
+        JdHotKeyStore.smartSet(bankDetailKey, questionBankResp);
+
+        return questionBankResp;
+    }
+
+    private QuestionBankDetailResp getByHotkeyCache(String bankDetailKey) {
         if (JdHotKeyStore.isHotKey(bankDetailKey)) {
             Object cacheQuestionBankDetail = JdHotKeyStore.get(bankDetailKey);
             if (cacheQuestionBankDetail != null) {
                 log.info("is hotkey, cache question bank detail, key: {}", bankDetailKey);
-                return (QuestionBankResp) cacheQuestionBankDetail;
+                return (QuestionBankDetailResp) cacheQuestionBankDetail;
             }
         }
-        QuestionBank questionBank = questionBankRepository.getOptById(id)
-                .orElseThrow(() -> new BizException("question bank may not exist"));
-        QuestionBankResp questionBankResp = questionBankConverter.toQuestionBankResp(questionBank);
-        JdHotKeyStore.smartSet(bankDetailKey, questionBankResp);
-        return questionBankResp;
+        return null;
+    }
+
+    private IPage<QuestionResp> getPageQuestionResp(int current, int pageSize, Long questionBankId) {
+        List<QuestionBankQuestion> bankQuestions = questionBankQuestionRepository.getByQuestionBankId(questionBankId);
+        List<Long> questionIds = bankQuestions.stream()
+                .map(QuestionBankQuestion::getQuestionId)
+                .toList();
+        IPage<Question> questionList = questionRepository.pageByIds(current, pageSize, questionIds);
+        return questionList.convert(questionConverter::toQuestionResp);
     }
 
     @Override

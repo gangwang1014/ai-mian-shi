@@ -3,7 +3,9 @@ package com.xxx.aimianshi.questionbank.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xxx.aimianshi.questionbank.domain.req.AddQuestionBankReq;
 import com.xxx.aimianshi.questionbank.domain.req.PageQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.req.QuestionBankDetailReq;
 import com.xxx.aimianshi.questionbank.domain.req.UpdateQuestionBankReq;
+import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankDetailResp;
 import com.xxx.aimianshi.questionbank.domain.resp.QuestionBankResp;
 import com.xxx.aimianshi.questionbank.service.QuestionBankService;
 import jakarta.validation.constraints.NotNull;
@@ -25,9 +27,9 @@ public class QuestionBankController {
         questionBankService.addQuestionBank(addQuestionBankReq);
     }
 
-    @GetMapping
-    public QuestionBankResp detailQuestionBank(@RequestParam @NotNull Long id) {
-        return questionBankService.detailQuestionBank(id);
+    @PostMapping("/detail")
+    public QuestionBankDetailResp detailQuestionBank(@RequestBody QuestionBankDetailReq req) {
+        return questionBankService.detailQuestionBank(req);
     }
 
     @PostMapping("/page")
