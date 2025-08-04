@@ -23,6 +23,10 @@ public final class RedisKeyManger {
     // bank:question:{questionBankId}
     public static final String BANK_QUESTION = "bank:question";
 
+    // chat:memory:{conversationId}
+    public static final String CHAT_MEMORY = "chat:memory";
+
+    public static final Long CHAT_MEMORY_EXPIRE_TIME = 7L;
 
     public static String getUserTokenKey(Long userId, String tokenId) {
         return getKey(TOKEN, userId + ":" + tokenId);
@@ -45,4 +49,7 @@ public final class RedisKeyManger {
     }
 
 
+    public static String getChatMemoryKey(String conversationId) {
+        return getKey(CHAT_MEMORY, conversationId);
+    }
 }

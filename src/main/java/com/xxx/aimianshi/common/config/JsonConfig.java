@@ -3,6 +3,8 @@ package com.xxx.aimianshi.common.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.xxx.aimianshi.ai.memory.MessageDeserializer;
+import org.springframework.ai.chat.messages.Message;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -19,6 +21,8 @@ public class JsonConfig {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Long.class, ToStringSerializer.instance);
         module.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        // 添加 spring ai message 反序列化器
+        module.addDeserializer(Message.class, new MessageDeserializer());
         objectMapper.registerModule(module);
         return objectMapper;
     }

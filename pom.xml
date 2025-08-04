@@ -6,6 +6,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.2.4</version>
+<!--    <version>3.4.7</version>-->
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -171,6 +172,18 @@
       <groupId>com.alibaba.cloud</groupId>
       <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
       <version>2023.0.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.alibaba.cloud.ai</groupId>
+      <artifactId>spring-ai-alibaba-starter</artifactId>
+      <version>1.0.0-M6.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>dashscope-sdk-java</artifactId>
+      <version>2.19.1</version>
     </dependency>
 
 
