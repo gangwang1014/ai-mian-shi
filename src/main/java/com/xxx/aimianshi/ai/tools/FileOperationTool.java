@@ -1,7 +1,7 @@
 package com.xxx.aimianshi.ai.tools;
 
 import cn.hutool.core.io.FileUtil;
-import com.xxx.aistudyagent.constant.FileConstant;
+import com.xxx.aimianshi.ai.constant.FileConstant;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 
